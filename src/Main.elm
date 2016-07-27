@@ -1,19 +1,25 @@
 module Main exposing (..)
 
-import Html exposing (Html, div, text)
+import Html exposing (Html, div)
 import Html.App
+import Auth.Models
+import Auth.Messages
+import Auth.Update
+import Auth.LoginView
+
 
 
 -- MODEL
 
 
 type alias Model =
-  String
+    { authInfo : Auth.Models.AuthInfo
+    }
 
 
 init : ( Model, Cmd Msg )
 init =
-  ( "Hello", Cmd.none )
+    ( Model Auth.Models.newAuthInfo, Cmd.none )
 
 
 
@@ -21,17 +27,7 @@ init =
 
 
 type Msg
-  = NoOp
-
-
-
--- VIEW
-
-
-view : Model -> Html Msg
-view model =
-  div []
-    [ text model ]
+    = AuthMsg Auth.Messages.Msg
 
 
 
@@ -40,9 +36,25 @@ view model =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-  case msg of
-    NoOp ->
-      ( model, Cmd.none )
+    case msg of
+        AuthMsg authMsg ->
+            let
+                ( updatedAuthInfo, cmd ) =
+                    Auth.Update.update authMsg model.authInfo
+            in
+                ( { model | authInfo = updatedAuthInfo }
+                , Cmd.map AuthMsg cmd
+                )
+
+
+
+-- VIEW
+
+
+view : Model -> Html Msg
+view model =
+    div []
+        [ Html.App.map AuthMsg (Auth.LoginView.view model.authInfo) ]
 
 
 
@@ -60,9 +72,9 @@ subscriptions model =
 
 main : Program Never
 main =
-  Html.App.program
-    { init = init
-    , view = view
-    , update = update
-    , subscriptions = subscriptions
-    }
+    Html.App.program
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        }
