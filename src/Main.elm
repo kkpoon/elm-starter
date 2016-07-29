@@ -1,11 +1,13 @@
 module Main exposing (..)
 
-import Html exposing (Html, div)
+import Html exposing (Html, div, text)
 import Html.App
+import Navigation
 import Auth.Models
 import Auth.Messages
 import Auth.Update
 import Auth.LoginView
+import Routing exposing (Route(..))
 
 
 
@@ -14,12 +16,17 @@ import Auth.LoginView
 
 type alias Model =
     { authInfo : Auth.Models.AuthInfo
+    , route : Route
     }
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( Model Auth.Models.newAuthInfo, Cmd.none )
+init : Result String Route -> ( Model, Cmd Msg )
+init result =
+    let
+        currentRoute =
+            Routing.routeFromResult result
+    in
+        ( Model Auth.Models.newAuthInfo currentRoute, Cmd.none )
 
 
 
@@ -48,13 +55,35 @@ update msg model =
 
 
 
+urlUpdate : Result String Route -> Model -> ( Model, Cmd Msg )
+urlUpdate result model =
+    let
+        currentRoute =
+            Routing.routeFromResult result
+    in
+        ( { model | route = currentRoute }, Cmd.none )
+
+
+
 -- VIEW
 
 
 view : Model -> Html Msg
 view model =
     div []
-        [ Html.App.map AuthMsg (Auth.LoginView.view model.authInfo) ]
+        [ page model ]
+
+
+
+page : Model -> Html Msg
+page model =
+    case model.route of
+        LoginRoute ->
+            Html.App.map AuthMsg (Auth.LoginView.view model.authInfo)
+        MemberAreaRoute ->
+            text "member"
+        NotFoundRoute ->
+            text "404"
 
 
 
@@ -72,9 +101,10 @@ subscriptions model =
 
 main : Program Never
 main =
-    Html.App.program
+    Navigation.program Routing.parser
         { init = init
         , view = view
         , update = update
+        , urlUpdate = urlUpdate
         , subscriptions = subscriptions
         }
