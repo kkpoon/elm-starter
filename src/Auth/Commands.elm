@@ -26,7 +26,15 @@ loginResponseDecoder =
 
 handleError : Http.Error -> Msg
 handleError error =
-    LoginFail "login failed"
+    case error of
+        Http.Timeout ->
+            LoginFail "Timeout"
+        Http.NetworkError ->
+            LoginFail "Network error"
+        Http.UnexpectedPayload payload ->
+            LoginFail (concat ["Unexpected payload: ", payload])
+        Http.BadResponse code body ->
+            LoginFail "login failed"
 
 
 

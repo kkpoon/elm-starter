@@ -20,7 +20,7 @@ update message model =
             ( model, login model.username model.password )
 
         LoginSuccess username token ->
-            ( { model | username = username, token = token, password = "", authenticated = True, errorMessage = "" }, Cmd.none )
+            ( { model | username = username, token = Just token, password = "", authenticated = True, errorMessage = Nothing }, Cmd.none )
 
         LoginFail errorMessage ->
-            ( { model | token = "", password = "", authenticated = False, errorMessage = errorMessage }, Cmd.none )
+            ( { model | token = Nothing, password = "", authenticated = False, errorMessage = Just errorMessage }, Cmd.none )

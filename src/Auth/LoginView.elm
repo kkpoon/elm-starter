@@ -1,10 +1,20 @@
 module Auth.LoginView exposing (..)
 
-import Html exposing (Html, div, input, br, button, text)
+import Html exposing (Html, div, input, br, button, p, text)
 import Html.Attributes exposing (type', placeholder, value)
 import Html.Events exposing (onInput, onClick)
 import Auth.Messages exposing (..)
 import Auth.Models exposing (AuthInfo)
+
+
+
+errorText : Maybe String -> Html msg
+errorText msg =
+    case msg of
+        Nothing ->
+            text ""
+        Just msg ->
+            text msg
 
 
 
@@ -26,4 +36,5 @@ view model =
             ] []
         , br [] []
         , button [ onClick PressLoginButton ] [ text "Login" ]
+        , p [] [ errorText model.errorMessage ]
         ]

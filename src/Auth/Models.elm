@@ -10,8 +10,8 @@ type alias Token =
 type alias AuthInfo =
     { username : String
     , password : String
-    , token : Token
-    , errorMessage : String
+    , token : Maybe Token
+    , errorMessage : Maybe String
     , authenticated : Bool
     }
 
@@ -21,7 +21,7 @@ newAuthInfo : AuthInfo
 newAuthInfo =
     { username = ""
     , password = ""
-    , token = ""
-    , errorMessage = ""
+    , token = Nothing
+    , errorMessage = Nothing
     , authenticated = False
     }
