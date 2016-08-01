@@ -20,13 +20,19 @@ type alias Model =
     }
 
 
-init : Result String Route -> ( Model, Cmd Msg )
+init : Result String Route -> ( Model, Cmd a )
 init result =
     let
-        currentRoute =
-            Routing.routeFromResult result
+        authInfo =
+            Auth.Models.newAuthInfo
+        routeResult =
+            Routing.nextRoute result (Routing.Model authInfo)
     in
-        ( Model Auth.Models.newAuthInfo currentRoute, Cmd.none )
+        case routeResult of
+            Ok route ->
+                ( Model authInfo route, Cmd.none )
+            Err cmd ->
+                ( Model authInfo UnauthorizedRoute, Cmd.none )
 
 
 
@@ -49,19 +55,21 @@ update msg model =
                 ( updatedAuthInfo, cmd ) =
                     Auth.Update.update authMsg model.authInfo
             in
-                ( { model | authInfo = updatedAuthInfo }
-                , Cmd.map AuthMsg cmd
-                )
+                ( { model | authInfo = updatedAuthInfo }, Cmd.map AuthMsg cmd )
 
 
 
-urlUpdate : Result String Route -> Model -> ( Model, Cmd Msg )
+urlUpdate : Result String Route -> Model -> ( Model, Cmd a )
 urlUpdate result model =
     let
-        currentRoute =
-            Routing.routeFromResult result
+        routeResult =
+            Routing.nextRoute result (Routing.Model model.authInfo)
     in
-        ( { model | route = currentRoute }, Cmd.none )
+        case routeResult of
+            Ok route ->
+                ( { model | route = route }, Cmd.none )
+            Err cmd ->
+                ( model, cmd )
 
 
 
@@ -78,10 +86,14 @@ view model =
 page : Model -> Html Msg
 page model =
     case model.route of
+        IndexRoute ->
+            text "index"
         LoginRoute ->
             Html.App.map AuthMsg (Auth.LoginView.view model.authInfo)
         MemberAreaRoute ->
             text "member"
+        UnauthorizedRoute ->
+            text "403"
         NotFoundRoute ->
             text "404"
 

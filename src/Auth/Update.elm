@@ -1,5 +1,6 @@
 module Auth.Update exposing (..)
 
+import Routing exposing (Route(..), goto)
 import Auth.Messages exposing (Msg(..))
 import Auth.Models exposing (AuthInfo)
 import Auth.Commands exposing (login)
@@ -20,7 +21,7 @@ update message model =
             ( model, login model.username model.password )
 
         LoginSuccess username token ->
-            ( { model | username = username, token = Just token, password = "", authenticated = True, errorMessage = Nothing }, Cmd.none )
+            ( { model | username = username, token = Just token, password = "", authenticated = True, errorMessage = Nothing }, goto MemberAreaRoute )
 
         LoginFail errorMessage ->
             ( { model | token = Nothing, password = "", authenticated = False, errorMessage = Just errorMessage }, Cmd.none )
