@@ -1,4 +1,11 @@
-module Routing exposing (Route(..), Model, parser, nextRoute, goto, replaceWith)
+module Routing exposing
+    ( Route(..)
+    , Model
+    , parser
+    , nextRoute
+    , goto
+    , replaceWith
+    )
 
 import String
 import Navigation

@@ -56,11 +56,14 @@ encodeBasicAuth username password =
 
 login : String -> String -> Cmd Msg
 login username password =
-    Http.send Http.defaultSettings
-        { verb = "POST"
-        , headers = [( "Authorization", concat ["Basic ", encodeBasicAuth username password] )]
-        , url = "/login"
-        , body = Http.empty
-        }
-        |> Http.fromJson loginResponseDecoder
-        |> Task.perform handleError handleSuccess
+    let
+        encodedBaseAuth = concat ["Basic ", encodeBasicAuth username password]
+    in
+        Http.send Http.defaultSettings
+            { verb = "POST"
+            , headers = [( "Authorization", encodedBaseAuth )]
+            , url = "/login"
+            , body = Http.empty
+            }
+            |> Http.fromJson loginResponseDecoder
+            |> Task.perform handleError handleSuccess

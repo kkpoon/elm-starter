@@ -21,7 +21,20 @@ update message model =
             ( model, login model.username model.password )
 
         LoginSuccess username token ->
-            ( { model | username = username, token = Just token, password = "", authenticated = True, errorMessage = Nothing }, goto MemberAreaRoute )
+            ( { model | username = username
+              , token = Just token
+              , password = ""
+              , authenticated = True
+              , errorMessage = Nothing
+              }
+            , goto MemberAreaRoute
+            )
 
         LoginFail errorMessage ->
-            ( { model | token = Nothing, password = "", authenticated = False, errorMessage = Just errorMessage }, Cmd.none )
+            ( { model | token = Nothing
+              , password = ""
+              , authenticated = False
+              , errorMessage = Just errorMessage
+              }
+            , Cmd.none
+            )
