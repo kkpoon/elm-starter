@@ -32,7 +32,7 @@ init result =
             Ok route ->
                 ( Model authInfo route, Cmd.none )
             Err cmd ->
-                ( Model authInfo UnauthorizedRoute, Cmd.none )
+                ( Model authInfo UnauthorizedRoute, cmd )
 
 
 

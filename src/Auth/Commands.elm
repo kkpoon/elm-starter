@@ -1,4 +1,4 @@
-module Auth.Commands exposing (..)
+module Auth.Commands exposing (login)
 
 import Http
 import Json.Decode as Decode exposing ((:=))
