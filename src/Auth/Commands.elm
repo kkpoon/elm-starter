@@ -8,12 +8,10 @@ import Base64
 import Auth.Messages exposing (Msg(..))
 
 
-
 type alias LoginResponse =
     { username : String
     , token : String
     }
-
 
 
 loginResponseDecoder : Decode.Decoder LoginResponse
@@ -23,19 +21,20 @@ loginResponseDecoder =
         ("token" := Decode.string)
 
 
-
 handleError : Http.Error -> Msg
 handleError error =
     case error of
         Http.Timeout ->
             LoginFail "Timeout"
+
         Http.NetworkError ->
             LoginFail "Network error"
+
         Http.UnexpectedPayload payload ->
-            LoginFail (concat ["Unexpected payload: ", payload])
+            LoginFail (concat [ "Unexpected payload: ", payload ])
+
         Http.BadResponse code body ->
             LoginFail "login failed"
-
 
 
 handleSuccess : LoginResponse -> Msg
@@ -43,25 +42,25 @@ handleSuccess res =
     LoginSuccess res.username res.token
 
 
-
-encodeBasicAuth : String -> String -> String
-encodeBasicAuth username password =
-    case Base64.encode (concat [username, ":", password]) of
+base64EncodeCredential : String -> String -> String
+base64EncodeCredential username password =
+    case Base64.encode (concat [ username, ":", password ]) of
         Ok value ->
             value
+
         Err error ->
             ""
-
 
 
 login : String -> String -> Cmd Msg
 login username password =
     let
-        encodedBaseAuth = concat ["Basic ", encodeBasicAuth username password]
+        basicAuthHeader =
+            concat [ "Basic ", base64EncodeCredential username password ]
     in
         Http.send Http.defaultSettings
             { verb = "POST"
-            , headers = [( "Authorization", encodedBaseAuth )]
+            , headers = [ ( "Authorization", basicAuthHeader ) ]
             , url = "/login"
             , body = Http.empty
             }

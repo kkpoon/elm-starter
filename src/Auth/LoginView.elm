@@ -7,17 +7,6 @@ import Auth.Messages exposing (..)
 import Auth.Models exposing (AuthInfo)
 
 
-
-errorText : Maybe String -> Html msg
-errorText msg =
-    case msg of
-        Nothing ->
-            text ""
-        Just msg ->
-            text msg
-
-
-
 view : AuthInfo -> Html Msg
 view model =
     div []
@@ -26,15 +15,17 @@ view model =
             , placeholder "Username"
             , value model.username
             , onInput EnterUsername
-            ] []
+            ]
+            []
         , br [] []
         , input
             [ type' "password"
             , placeholder "Password"
             , value model.password
             , onInput EnterPassword
-            ] []
+            ]
+            []
         , br [] []
         , button [ onClick PressLoginButton ] [ text "Login" ]
-        , p [] [ errorText model.errorMessage ]
+        , p [] [ text (Maybe.withDefault "" model.errorMessage) ]
         ]
