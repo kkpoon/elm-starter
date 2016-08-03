@@ -6,11 +6,9 @@ import Auth.Models exposing (AuthInfo)
 import Auth.Commands exposing (login)
 
 
-
 update : Msg -> AuthInfo -> ( AuthInfo, Cmd Msg )
 update message model =
     case Debug.log "AuthMsg" message of
-
         EnterUsername username ->
             ( { model | username = username }, Cmd.none )
 
@@ -21,20 +19,22 @@ update message model =
             ( model, login model.username model.password )
 
         LoginSuccess username token ->
-            ( { model | username = username
-              , token = Just token
-              , password = ""
-              , authenticated = True
-              , errorMessage = Nothing
+            ( { model
+                | username = username
+                , token = Just token
+                , password = ""
+                , authenticated = True
+                , errorMessage = Nothing
               }
             , goto MemberAreaRoute
             )
 
         LoginFail errorMessage ->
-            ( { model | token = Nothing
-              , password = ""
-              , authenticated = False
-              , errorMessage = Just errorMessage
+            ( { model
+                | token = Nothing
+                , password = ""
+                , authenticated = False
+                , errorMessage = Just errorMessage
               }
             , Cmd.none
             )

@@ -1,7 +1,6 @@
 module Auth.Messages exposing (..)
 
 
-
 type Msg
     = EnterUsername String
     | EnterPassword String

@@ -1,10 +1,8 @@
 module Auth.Models exposing (..)
 
 
-
 type alias Token =
     String
-
 
 
 type alias AuthInfo =
@@ -14,7 +12,6 @@ type alias AuthInfo =
     , errorMessage : Maybe String
     , authenticated : Bool
     }
-
 
 
 newAuthInfo : AuthInfo
