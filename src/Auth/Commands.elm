@@ -1,7 +1,8 @@
 module Auth.Commands exposing (login)
 
 import Http
-import Json.Decode as Decode exposing ((:=))
+import Json.Decode as Decode exposing (Decoder)
+import Json.Decode.Pipeline exposing (decode, required)
 import Task
 import String exposing (concat)
 import Base64
@@ -14,11 +15,11 @@ type alias LoginResponse =
     }
 
 
-loginResponseDecoder : Decode.Decoder LoginResponse
+loginResponseDecoder : Decoder LoginResponse
 loginResponseDecoder =
-    Decode.object2 LoginResponse
-        ("username" := Decode.string)
-        ("token" := Decode.string)
+    decode LoginResponse
+        |> required "username" Decode.string
+        |> required "token" Decode.string
 
 
 handleError : Http.Error -> Msg
